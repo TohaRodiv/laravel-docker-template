@@ -1,0 +1,74 @@
+services:
+  web:
+    image: nginx:latest
+    volumes:
+      - ./www:/var/www
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    environment:
+      - NGINX_HOST=localhost
+    networks:
+      - laravel-development
+    depends_on:
+      php-fpm:
+        condition: service_started
+
+  php-fpm:
+    build:
+      context: .
+      dockerfile: ./docker/php-fpm/Dockerfile
+      target: development
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+        XDEBUG_ENABLED: ${XDEBUG_ENABLED:-true}
+        XDEBUG_MODE: develop,coverage,debug,profile
+        XDEBUG_HOST: ${XDEBUG_HOST:-host.docker.internal}
+        XDEBUG_IDE_KEY: ${XDEBUG_IDE_KEY:-DOCKER}
+        XDEBUG_LOG: /dev/stdout
+        XDEBUG_LOG_LEVEL: 0
+    env_file:
+      - ./www/.env
+    user: "${UID:-1000}:${GID:-1000}"
+    volumes:
+      - ./www:/var/www
+    networks:
+      - laravel-development
+    depends_on:
+      mysql:
+        condition: service_started
+
+  workspace:
+    build:
+      context: .
+      dockerfile: ./docker/workspace/Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    tty: true  # Enables an interactive terminal
+    stdin_open: true  # Keeps standard input open for 'docker exec'
+    env_file:
+      - ./www/.env
+    volumes:
+      - ./www:/var/www
+    networks:
+      - laravel-development
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=laravel_db
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    networks:
+      - laravel-development
+
+networks:
+  laravel-development:
