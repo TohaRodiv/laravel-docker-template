@@ -1,2 +1,11 @@
 data/mysql/*
 www/**
+www/.env.example
+www/composer.json
+www/composer.lock
+www/README.md
+www/config/session.php
+www/routes/web.php
+www/tests/Pest.php
+www/tests/Feature/ExampleTest.php
+www/tests/Unit/ExampleTest.php
