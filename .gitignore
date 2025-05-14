@@ -9,3 +9,5 @@ www/routes/web.php
 www/tests/Pest.php
 www/tests/Feature/ExampleTest.php
 www/tests/Unit/ExampleTest.php
+www/tests/Unit/ExampleTest.php
+www/tests/Feature/ExampleTest.php
