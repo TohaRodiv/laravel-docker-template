@@ -11,7 +11,7 @@ docker-compose build workspace
 Подключится  к сервису workspace и установить laravel:
 
 ```bash
-docker-compose run --rm bash
+docker-compose run --rm workspace bash
 ```
 
 В контейнере workspace выполнить установку:
